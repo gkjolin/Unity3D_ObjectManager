@@ -42,16 +42,18 @@ public class BasicLifeObjectManager : ObjectManager.ObjectManager
     /// <summary>
     /// 新しく生成されたオブジェクトを初期化します。
     /// </summary>
+    /// <param name="objectArrayIndex">
+    /// 何番目のオブジェクトが生成されたかを示すインデックス。
     /// <param name="newObject">
     /// 新しく生成されたオブジェクト。
     /// </param>
-    protected override void Initialize(GameObject newObject)
+    protected override void Initialize(int objectArrayIndex, GameObject newObject)
     {
         newObject.AddComponent<BasicLifeObject>();
         newObject.GetComponent<BasicLifeObject>()
-            .Initialize(CalcParameter(this.animationSpeed, this.animationSpeedRandomness),
-                        CalcParameter(this.moveSpeed, this.moveSpeedRandomness),
-                        CalcParameter(this.lifeTimeSec, this.lifeTimeSecRandomness));
+        .Initialize(CalcParameter(this.moveSpeed, this.moveSpeedRandomness),
+                    CalcParameter(this.animationSpeed, this.animationSpeedRandomness),
+                    CalcParameter(this.lifeTimeSec, this.lifeTimeSecRandomness));
 
         newObject.transform.localScale *= CalcParameter(this.scale, this.scaleRandomness);
     }

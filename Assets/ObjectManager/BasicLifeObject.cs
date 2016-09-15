@@ -6,8 +6,8 @@ namespace ObjectManager
     {
         #region Field
 
-        protected float animationSpeed;
         protected float moveSpeed;
+        protected float animationSpeed;
         protected float lifeTimeSec;
 
         private Vector3 targetPosition;
@@ -39,19 +39,19 @@ namespace ObjectManager
         /// <summary>
         /// パラメータを初期化します。
         /// </summary>
-        /// <param name="animationSpeed">
-        /// アニメーション速度。
-        /// </param>
         /// <param name="moveSpeed">
         /// 移動速度。
+        /// </param>
+        /// <param name="animationSpeed">
+        /// アニメーション速度。
         /// </param>
         /// <param name="lifeTimeSec">
         /// 寿命(sec)。
         /// </param>
-        public void Initialize(float animationSpeed, float moveSpeed, float lifeTimeSec)
+        public void Initialize(float moveSpeed, float animationSpeed, float lifeTimeSec)
         {
-            this.animationSpeed = animationSpeed;
             this.moveSpeed = moveSpeed;
+            this.animationSpeed = animationSpeed;
             this.lifeTimeSec = lifeTimeSec;
 
             Destroy(this.gameObject, this.lifeTimeSec);

@@ -9,9 +9,6 @@ namespace ObjectManager
     {
         #region Field
 
-        // objectParent にはオブジェクトの親になる Transform を設定します。
-        // null のとき、親は設定されません。
-
         public Transform objectParent;
 
         public GameObject[] objectArray;
@@ -89,7 +86,7 @@ namespace ObjectManager
             GameObject newObject = GameObject.Instantiate(this.objectArray[objectArrayIndex]);
             newObject.transform.parent = this.objectParent;
 
-            Initialize(newObject);
+            Initialize(objectArrayIndex, newObject);
 
             return newObject;
         }
@@ -110,10 +107,13 @@ namespace ObjectManager
         /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
         /// </summary>
+        /// <param name="objectArrayIndex">
+        /// 何番目のオブジェクトが生成されたかを示すインデックス。
+        /// </param>
         /// <param name="newObject">
         /// 新しく生成されたオブジェクト。
         /// </param>
-        protected abstract void Initialize(GameObject newObject);
+        protected abstract void Initialize(int objectArrayIndex, GameObject newObject);
 
         #endregion Method
     }
