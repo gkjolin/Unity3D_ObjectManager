@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
-namespace ObjectManager
+namespace ObjectManager.UNET
 {
     /// <summary>
     /// BasicLifeObject の生成と参照を管理します。
@@ -28,6 +29,7 @@ namespace ObjectManager
         /// <summary>
         /// 更新時に呼び出されます。
         /// </summary>
+        [ServerCallback]
         protected override void Update()
         {
             base.Update();
@@ -51,6 +53,7 @@ namespace ObjectManager
         /// <param name="newObject">
         /// 新しく生成されたオブジェクト。
         /// </param>
+        [Server]
         protected override void Initialize(int objectArrayIndex, GameObject newObject)
         {
             BasicLifeObject basicLifeObject = newObject.AddComponent<BasicLifeObject>();
@@ -75,6 +78,7 @@ namespace ObjectManager
         /// <returns>
         /// 変動率を考慮したパラメータ。
         /// </returns>
+        [Server]
         protected virtual float CalcParameter(float parameter, float randomness)
         {
             return parameter * Random.Range(1 - randomness, 1 + randomness);

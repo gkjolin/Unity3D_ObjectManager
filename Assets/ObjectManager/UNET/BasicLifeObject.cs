@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
-namespace ObjectManager
+namespace ObjectManager.UNET
 {
     /// <summary>
     /// 基本的な生命体を表します。
     /// </summary>
-    public class BasicLifeObject : MonoBehaviour
+    public class BasicLifeObject : NetworkBehaviour
     {
         #region Field
 
@@ -36,6 +37,7 @@ namespace ObjectManager
         /// <summary>
         /// 更新時に呼び出されます。
         /// </summary>
+        [ServerCallback]
         protected virtual void Update()
         {
             this.transform.position = Vector3.MoveTowards
@@ -81,7 +83,7 @@ namespace ObjectManager
         /// </summary>
         private void SetTargetPosition()
         {
-            this.targetPosition = Random.onUnitSphere * 5;
+            this.targetPosition = Random.onUnitSphere * 8;
         }
 
         #endregion Method
