@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ObjectManagerSample : MonoBehaviour
+public class BasicLifeObjectManagerSample : MonoBehaviour
 {
     void OnGUI()
     {

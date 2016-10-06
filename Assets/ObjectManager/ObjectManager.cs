@@ -9,14 +9,47 @@ namespace ObjectManager
     {
         #region Field
 
+        /// <summary>
+        /// 生成するオブジェクトの親。
+        /// </summary>
         public Transform objectParent;
 
-        public GameObject[] objectArray;
+        /// <summary>
+        /// 生成するオブジェクト。生成されたオブジェクトではありません。
+        /// </summary>
+        public GameObject[] generateObjects;
 
+        /// <summary>
+        /// 生成したオブジェクトを管理するマネージャ。
+        /// </summary>
         protected ManagedObjectManager managedObjectManager;
+
+        /// <summary>
+        /// 管理するオブジェクトの最大数。
+        /// </summary>
         public int managedObjectMaxCount = 10;
 
         #endregion Field
+
+        #region Property
+
+        /// <summary>
+        /// 生成したオブジェクトを管理する Manager を取得します。
+        /// </summary>
+        public ManagedObjectManager ManagedObjectManager
+        {
+            get { return this.managedObjectManager; }
+        }
+
+        /// <summary>
+        /// 管理している
+        /// </summary>
+        public int ManagedObjectCount
+        {
+            get { return this.managedObjectManager.ManagedObjectList.Count; }
+        }
+
+        #endregion Property
 
         #region Method
 
@@ -69,7 +102,7 @@ namespace ObjectManager
         /// </returns>
         public virtual GameObject AddNewObject()
         {
-            return AddNewObject(Random.Range(0, this.objectArray.Length));
+            return AddNewObject(Random.Range(0, this.generateObjects.Length));
         }
 
         /// <summary>
@@ -83,7 +116,7 @@ namespace ObjectManager
         /// </returns>
         protected virtual GameObject GenerateObject(int objectArrayIndex)
         {
-            GameObject newObject = GameObject.Instantiate(this.objectArray[objectArrayIndex]);
+            GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
             newObject.transform.parent = this.objectParent;
 
             Initialize(objectArrayIndex, newObject);
@@ -99,7 +132,7 @@ namespace ObjectManager
         /// </returns>
         protected virtual GameObject GenerateObject()
         {
-            int objectIndex = Random.Range(0, this.objectArray.Length);
+            int objectIndex = Random.Range(0, this.generateObjects.Length);
 
             return GenerateObject(objectIndex);
         }

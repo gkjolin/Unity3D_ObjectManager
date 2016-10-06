@@ -37,7 +37,6 @@ namespace ObjectManager.UNET
         /// <summary>
         /// 更新時に呼び出されます。
         /// </summary>
-        [ServerCallback]
         protected virtual void Update()
         {
             this.transform.position = Vector3.MoveTowards
@@ -83,7 +82,7 @@ namespace ObjectManager.UNET
         /// </summary>
         private void SetTargetPosition()
         {
-            this.targetPosition = Random.onUnitSphere * 8;
+            this.targetPosition = Random.onUnitSphere * 5;
         }
 
         #endregion Method

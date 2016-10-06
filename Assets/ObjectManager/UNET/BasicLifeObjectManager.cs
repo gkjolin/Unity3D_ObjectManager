@@ -10,10 +10,6 @@ namespace ObjectManager.UNET
     {
         #region Field
 
-        public bool enableKeyControl = true;
-        public KeyCode addNewObjectKey = KeyCode.Return;
-        public KeyCode destroyAllObjectKey = KeyCode.Delete;
-
         public float animationSpeed;
         public float moveSpeed;
         public float lifeTimeSec;
@@ -27,26 +23,8 @@ namespace ObjectManager.UNET
         #endregion Field
 
         /// <summary>
-        /// 更新時に呼び出されます。
-        /// </summary>
-        [ServerCallback]
-        protected override void Update()
-        {
-            base.Update();
-
-            if (this.enableKeyControl && Input.GetKeyDown(this.addNewObjectKey))
-            {
-                 AddNewObject();
-            }
-
-            if (this.enableKeyControl && Input.GetKeyDown(this.destroyAllObjectKey))
-            {
-                this.managedObjectManager.RemoveAllManagedObjects();
-            }
-        }
-
-        /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
+        /// スポーンされるより前に実行されます。
         /// </summary>
         /// <param name="objectArrayIndex">
         /// 何番目のオブジェクトが生成されたかを示すインデックス。

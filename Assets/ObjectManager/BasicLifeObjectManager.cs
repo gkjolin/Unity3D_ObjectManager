@@ -26,24 +26,6 @@ namespace ObjectManager
         #endregion Field
 
         /// <summary>
-        /// 更新時に呼び出されます。
-        /// </summary>
-        protected override void Update()
-        {
-            base.Update();
-
-            if (this.enableKeyControl && Input.GetKeyDown(this.addNewObjectKey))
-            {
-                 AddNewObject();
-            }
-
-            if (this.enableKeyControl && Input.GetKeyDown(this.destroyAllObjectKey))
-            {
-                this.managedObjectManager.RemoveAllManagedObjects();
-            }
-        }
-
-        /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
         /// </summary>
         /// <param name="objectArrayIndex">

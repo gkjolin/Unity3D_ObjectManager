@@ -10,15 +10,47 @@ namespace ObjectManager.UNET
     {
         #region Field
 
+        /// <summary>
+        /// 生成するオブジェクトの親。
+        /// </summary>
         public Transform objectParent;
 
-        public GameObject[] objectArray;
+        /// <summary>
+        /// 生成するオブジェクト。生成されたオブジェクトではありません。
+        /// </summary>
+        public GameObject[] generateObjects;
 
+        /// <summary>
+        /// 生成したオブジェクトを管理するマネージャ。
+        /// </summary>
         protected ManagedObjectManager managedObjectManager;
 
+        /// <summary>
+        /// 管理するオブジェクトの最大数。
+        /// </summary>
         public int managedObjectMaxCount = 10;
 
         #endregion Field
+
+        #region Property
+
+        /// <summary>
+        /// 生成したオブジェクトを管理する Manager を取得します。
+        /// </summary>
+        public ManagedObjectManager ManagedObjectManager
+        {
+            get { return this.managedObjectManager; }
+        }
+
+        /// <summary>
+        /// 管理している
+        /// </summary>
+        public int ManagedObjectCount
+        {
+            get { return this.managedObjectManager.ManagedObjectList.Count; }
+        }
+
+        #endregion Property
 
         #region Method
 
@@ -76,7 +108,7 @@ namespace ObjectManager.UNET
         [Server]
         public virtual GameObject AddNewObject()
         {
-            return AddNewObject(Random.Range(0, this.objectArray.Length));
+            return AddNewObject(Random.Range(0, this.generateObjects.Length));
         }
 
         /// <summary>
@@ -91,7 +123,10 @@ namespace ObjectManager.UNET
         [Server]
         protected virtual GameObject GenerateObject(int objectArrayIndex)
         {
-            GameObject newObject = GameObject.Instantiate(this.objectArray[objectArrayIndex]);
+            // スポーンしてからでないと RpcClient を呼び出すことができません。
+            // スポーン前に初期化したパラメータは共有されます。
+
+            GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
             newObject.transform.parent = this.objectParent;
 
             Initialize(objectArrayIndex, newObject);
@@ -110,13 +145,14 @@ namespace ObjectManager.UNET
         [Server]
         protected virtual GameObject GenerateObject()
         {
-            int objectIndex = Random.Range(0, this.objectArray.Length);
+            int objectIndex = Random.Range(0, this.generateObjects.Length);
 
             return GenerateObject(objectIndex);
         }
 
         /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
+        /// スポーンされるより前に実行されます。
         /// </summary>
         /// <param name="objectArrayIndex">
         /// 何番目のオブジェクトが生成されたかを示すインデックス。
@@ -126,6 +162,31 @@ namespace ObjectManager.UNET
         /// </param>
         [Server]
         protected abstract void Initialize(int objectArrayIndex, GameObject newObject);
+
+        /// <summary>
+        /// 管理するオブジェクトをすべて削除して管理対象から除外します。
+        /// </summary>
+        [Server]
+        public void RemoveAllObject()
+        {
+            this.managedObjectManager.RemoveAllManagedObjects();
+        }
+
+        /// <summary>
+        /// 指定したオブジェクトを削除して管理対象から除外します。
+        /// </summary>
+        /// <param name="managedObject">
+        /// 削除して管理対象から除外するオブジェクト。
+        /// </param>
+        /// <returns>
+        /// 削除に成功するとき true, 失敗するとき false.
+        /// 管理されるオブジェクトでない場合などに削除に失敗します。
+        /// </returns>
+        [Server]
+        public bool RemoveObject(GameObject managedObject)
+        {
+            return this.managedObjectManager.RemoveManagedObject(managedObject);
+        }
 
         #endregion Method
     }
