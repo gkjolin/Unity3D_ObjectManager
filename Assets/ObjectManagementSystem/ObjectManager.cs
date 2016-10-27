@@ -1,52 +1,39 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace ObjectManagementSystem
 {
     /// <summary>
-    /// あるオブジェクトの生成と参照を管理します。
+    /// オブジェクトへの参照を管理します。
     /// </summary>
     public abstract class ObjectManager : MonoBehaviour
     {
         #region Field
 
         /// <summary>
-        /// 生成するオブジェクトの親。
-        /// </summary>
-        public Transform objectParent;
-
-        /// <summary>
-        /// 生成するオブジェクト。生成されたオブジェクトではありません。
-        /// </summary>
-        public GameObject[] generateObjects;
-
-        /// <summary>
-        /// 生成したオブジェクトを管理するマネージャ。
-        /// </summary>
-        protected ManagedObjectManager managedObjectManager;
-
-        /// <summary>
         /// 管理するオブジェクトの最大数。
         /// </summary>
         public int managedObjectMaxCount = 100;
+
+        /// <summary>
+        /// 管理するオブジェクトのリスト。
+        /// </summary>
+        protected List<ManagedObject> managedObjects;
 
         #endregion Field
 
         #region Property
 
         /// <summary>
-        /// 生成したオブジェクトを管理する Manager を取得します。
+        /// 管理するオブジェクトのリストを取得します。
+        /// 破壊的操作が可能な点に注意してください。
         /// </summary>
-        public ManagedObjectManager ManagedObjectManager
+        public List<ManagedObject> ManagedObjects
         {
-            get { return this.managedObjectManager; }
-        }
-
-        /// <summary>
-        /// 管理している
-        /// </summary>
-        public int ManagedObjectCount
-        {
-            get { return this.managedObjectManager.ManagedObjectList.Count; }
+            get
+            {
+                return this.managedObjects;
+            }
         }
 
         #endregion Property
@@ -58,8 +45,7 @@ namespace ObjectManagementSystem
         /// </summary>
         protected virtual void Start()
         {
-            this.managedObjectManager = new ManagedObjectManager();
-            this.managedObjectManager.managedObjectMaxCount = this.managedObjectMaxCount;
+            this.managedObjects = new List<ManagedObject>();
         }
 
         /// <summary>
@@ -67,108 +53,146 @@ namespace ObjectManagementSystem
         /// </summary>
         protected virtual void Update()
         {
-            this.managedObjectManager.managedObjectMaxCount = this.managedObjectMaxCount;
+            TrimManagedObjects();
         }
 
         /// <summary>
-        /// 指定した種類のオブジェクトを生成して追加します。
+        /// 管理するオブジェクトを追加します。
+        /// 管理するオブジェクトの数が最大の場合などに失敗します。
         /// </summary>
-        /// <param name="objectArrayIndex">
-        /// 追加するオブジェクトのインデックス。
+        /// <param name="gameObject">
+        /// 管理するオブジェクト。
         /// </param>
         /// <returns>
-        /// 生成して追加されたオブジェクト。
-        /// 追加に失敗するとき null.
+        /// オブジェクトに追加された ManagedObject. 追加に失敗するとき null.
         /// </returns>
-        public virtual GameObject AddNewObject(int objectArrayIndex)
+        public ManagedObject AddManagedObject(GameObject gameObject)
         {
-            if (this.managedObjectManager.CheckManagedObjectCountIsMax())
+            if (CheckManagedObjectCountIsMax())
             {
                 return null;
             }
 
-            GameObject newGameObject = GenerateObject(objectArrayIndex);
-            this.managedObjectManager.AddManagedObject(newGameObject);
+            ManagedObject managedObject = gameObject.AddComponent<ManagedObject>();
+            managedObject.Initialize(this);
 
-            return newGameObject;
+            this.managedObjects.Add(managedObject);
+
+            return managedObject;
         }
 
         /// <summary>
-        /// 新しいオブジェクトをランダムに生成して追加します。
-        /// </summary>
-        /// <returns>
-        /// 生成して追加されたオブジェクト。
-        /// 追加に失敗するとき null.
-        /// </returns>
-        public virtual GameObject AddNewObject()
-        {
-            return AddNewObject(Random.Range(0, this.generateObjects.Length));
-        }
-
-        /// <summary>
-        /// 指定した種類のオブジェクトを生成して返します。
-        /// </summary>
-        /// <param name="objectArrayIndex">
-        /// オブジェクトの種類。
-        /// </param>
-        /// <returns>
-        /// 新しいオブジェクトのインスタンス。
-        /// </returns>
-        protected virtual GameObject GenerateObject(int objectArrayIndex)
-        {
-            GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
-            newObject.transform.parent = this.objectParent;
-
-            Initialize(objectArrayIndex, newObject);
-
-            return newObject;
-        }
-
-        /// <summary>
-        /// ランダムな種類の新しいオブジェクトを生成して返します。
-        /// </summary>
-        /// <returns>
-        /// 新しいオブジェクトのインスタンス。
-        /// </returns>
-        protected virtual GameObject GenerateObject()
-        {
-            int objectIndex = Random.Range(0, this.generateObjects.Length);
-
-            return GenerateObject(objectIndex);
-        }
-
-        /// <summary>
-        /// 新しく生成されたオブジェクトを初期化します。
-        /// </summary>
-        /// <param name="objectArrayIndex">
-        /// 何番目のオブジェクトが生成されたかを示すインデックス。
-        /// </param>
-        /// <param name="newObject">
-        /// 新しく生成されたオブジェクト。
-        /// </param>
-        protected abstract void Initialize(int objectArrayIndex, GameObject newObject);
-
-        /// <summary>
-        /// 管理するオブジェクトをすべて削除して管理対象から除外します。
-        /// </summary>
-        public void RemoveAllObject()
-        {
-            this.managedObjectManager.RemoveAllManagedObjects();
-        }
-
-        /// <summary>
-        /// 指定したオブジェクトを削除して管理対象から除外します。
+        /// オブジェクトを管理対象から解放します。
+        /// 管理されるオブジェクトでない場合などに解放に失敗します。
         /// </summary>
         /// <param name="managedObject">
-        /// 削除して管理対象から除外するオブジェクト。
+        /// 管理対象から解放するオブジェクト。
+        /// </param>
+        /// <returns>
+        /// 解放に成功するとき true, 失敗するとき false.
+        /// </returns>
+        public bool ReleaseManagedObject(ManagedObject managedObject)
+        {
+            if (managedObject.ObjectManager != this)
+            {
+                return false;
+            }
+
+            // ManagedObject.OnDestroy が呼び出され、ManagedObjects から参照を削除します。
+
+            DestroyImmediate(managedObject);
+
+            return true;
+        }
+
+        /// <summary>
+        /// すべてのオブジェクトを管理対象から解放します。
+        /// </summary>
+        public void ReleaseManagedObjectAll()
+        {
+            int count = this.managedObjects.Count - 1;
+
+            for (int i = count; i >= 0; i--)
+            {
+                ReleaseManagedObject(this.managedObjects[i]);
+            }
+
+            this.managedObjects.Clear();
+        }
+
+        /// <summary>
+        /// オブジェクトを削除して管理対象から解放します。
+        /// 管理されるオブジェクトでない場合などに解放に失敗します。
+        /// </summary>
+        /// <param name="managedObject">
+        /// 削除して管理対象から解放するオブジェクト。
         /// </param>
         /// <returns>
         /// 削除に成功するとき true, 失敗するとき false.
-        /// 管理されるオブジェクトでない場合などに削除に失敗します。
         /// </returns>
-        public bool RemoveObject(GameObject managedObject)
+        public bool RemoveManagedObject(ManagedObject managedObject)
         {
-            return this.managedObjectManager.RemoveManagedObject(managedObject);
+            if (managedObject.ObjectManager != this)
+            {
+                return false;
+            }
+
+            GameObject.DestroyImmediate(managedObject.gameObject);
+
+            return true;
+        }
+
+        /// <summary>
+        /// すべてのオブジェクトを削除して管理対象から解放します。
+        /// </summary>
+        public void RemoveManagedObjectAll()
+        {
+            int count = this.managedObjects.Count - 1;
+
+            for (int i = count; i >= 0; i--)
+            {
+                RemoveManagedObject(this.managedObjects[i]);
+            }
+
+            this.managedObjects.Clear();
+        }
+
+        /// <summary>
+        /// オブジェクトの管理数が最大であるかどうかをチェックします。
+        /// </summary>
+        /// <returns>
+        /// オブジェクトの管理数が最大のとき true, それ以外のとき false.
+        /// </returns>
+        public bool CheckManagedObjectCountIsMax()
+        {
+            return this.managedObjects.Count == this.managedObjectMaxCount;
+        }
+
+        /// <summary>
+        /// 管理するオブジェクトの数を最大数に収まるようにトリミングします。
+        /// </summary>
+        public void TrimManagedObjects()
+        {
+            int trimCount = this.managedObjects.Count - this.managedObjectMaxCount;
+
+            if (trimCount > 0)
+            {
+                RemoveOldManagedObject(trimCount);
+            }
+        }
+
+        /// <summary>
+        /// 指定した数だけ、古い管理オブジェクトを削除します。
+        /// </summary>
+        /// <param name="removeCount">
+        /// 削除する数。
+        /// </param>
+        public void RemoveOldManagedObject(int removeCount)
+        {
+            for (int i = 0; i < removeCount; i++)
+            {
+                RemoveManagedObject(this.managedObjects[i]);
+            }
         }
 
         #endregion Method

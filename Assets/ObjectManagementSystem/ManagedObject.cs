@@ -3,20 +3,16 @@
 namespace ObjectManagementSystem
 {
     /// <summary>
-    /// ObjectManager クラスで管理されるオブジェクトに追加されるコンポーネントです。
+    /// ObjectManager で管理されるオブジェクトに追加されるコンポーネントです。
     /// </summary>
     public class ManagedObject : MonoBehaviour
     {
-        // ManagedObject コンポーネントが外部から削除されるとき、
-        // ManagedObject.OnDestroy から ObjectManager.RemoveManagedObject が呼ばれ、
-        // ObjectManager の管理下から解放されます。
-
         #region Field
 
         /// <summary>
         /// このオブジェクトを管理するマネージャー。
         /// </summary>
-        protected ManagedObjectManager objectManager;
+        protected ObjectManager objectManager;
 
         /// <summary>
         /// 初期化されたかどうか。初期化は一度だけ行われます。
@@ -30,7 +26,7 @@ namespace ObjectManagementSystem
         /// <summary>
         /// このオブジェクトを管理するマネージャーを取得します。
         /// </summary>
-        public ManagedObjectManager ObjectReferenceManager
+        public ObjectManager ObjectManager
         {
             get { return this.objectManager; }
         }
@@ -57,7 +53,7 @@ namespace ObjectManagementSystem
                 return;
             }
 
-            this.objectManager.RemoveManagedObject(this.gameObject);
+            this.objectManager.ManagedObjects.Remove(this);
         }
 
         /// <summary>
@@ -69,7 +65,7 @@ namespace ObjectManagementSystem
         /// <returns>
         /// 初期化に成功するとき true, 失敗するとき false.
         /// </returns>
-        public virtual bool Initialize(ManagedObjectManager objectManager)
+        public virtual bool Initialize(ObjectManager objectManager)
         {
             if (this.initOnce)
             {

@@ -5,7 +5,7 @@ namespace ObjectManagementSystem
     /// <summary>
     /// BasicLifeObject の生成と参照を管理します。
     /// </summary>
-    public class BasicLifeObjectManager : ObjectManager
+    public class BasicLifeObjectManagerGenerate : ObjectManagerGenerate
     {
         #region Field
 

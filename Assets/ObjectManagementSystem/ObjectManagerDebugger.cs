@@ -3,16 +3,16 @@
 namespace ObjectManagementSystem
 {
     /// <summary>
-    /// ObjectManager をデバッグします。
+    /// ObjectManagerGenerate をデバッグします。
     /// </summary>
-    public class ObjectManagerDebugger : MonoBehaviour
+    public class ObjectManagerGenerateDebugger : MonoBehaviour
     {
         #region Field
 
         /// <summary>
-        /// デバッグする ObjectManager.
+        /// デバッグする ObjectManagerGenerate.
         /// </summary>
-        public ObjectManager objectManager;
+        public ObjectManagerGenerate objectManagerGenerate;
 
         /// <summary>
         /// オブジェクトを追加するキー。
@@ -35,12 +35,12 @@ namespace ObjectManagementSystem
         {
             if (Input.GetKeyDown(this.addNewObjectKey))
             {
-                this.objectManager.AddNewObject();
+                this.objectManagerGenerate.AddObject();
             }
 
             if (Input.GetKeyDown(this.removeAllObjectKey))
             {
-                this.objectManager.RemoveAllObject();
+                this.objectManagerGenerate.ReleaseManagedObjectAll();
             }
         }
 
