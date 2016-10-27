@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ObjectManager
+namespace ObjectManagementSystem
 {
     /// <summary>
     /// ObjectManager クラスで管理されるオブジェクトに追加されるコンポーネントです。
@@ -13,17 +13,34 @@ namespace ObjectManager
 
         #region Field
 
+        /// <summary>
+        /// このオブジェクトを管理するマネージャー。
+        /// </summary>
         protected ManagedObjectManager objectManager;
 
+        /// <summary>
+        /// 初期化されたかどうか。初期化は一度だけ行われます。
+        /// </summary>
         private bool initOnce;
 
         #endregion Field
 
         #region Property
 
+        /// <summary>
+        /// このオブジェクトを管理するマネージャーを取得します。
+        /// </summary>
         public ManagedObjectManager ObjectReferenceManager
         {
             get { return this.objectManager; }
+        }
+
+        /// <summary>
+        /// 初期化されたかどうかを取得します。初期化は一度だけ行われます。
+        /// </summary>
+        public bool InitOnce
+        {
+            get { return this.initOnce; }
         }
 
         #endregion Property

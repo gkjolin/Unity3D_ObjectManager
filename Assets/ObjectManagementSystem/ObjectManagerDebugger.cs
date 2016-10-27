@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 
-namespace ObjectManager.UNET
+namespace ObjectManagementSystem
 {
+    /// <summary>
+    /// ObjectManager をデバッグします。
+    /// </summary>
     public class ObjectManagerDebugger : MonoBehaviour
     {
         #region Field
 
+        /// <summary>
+        /// デバッグする ObjectManager.
+        /// </summary>
         public ObjectManager objectManager;
 
+        /// <summary>
+        /// オブジェクトを追加するキー。
+        /// </summary>
         public KeyCode addNewObjectKey = KeyCode.Return;
 
+        /// <summary>
+        /// オブジェクトを削除するキー。
+        /// </summary>
         public KeyCode removeAllObjectKey = KeyCode.Delete;
 
         #endregion Field

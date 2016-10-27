@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ObjectManager
+namespace ObjectManagementSystem
 {
     /// <summary>
     /// 基本的な生命体を表します。

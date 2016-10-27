@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 
-namespace ObjectManager.UNET
+namespace ObjectManagementSystem
 {
     /// <summary>
     /// あるオブジェクトの生成と参照を管理します。
     /// </summary>
-    public abstract class ObjectManager : NetworkBehaviour
+    public abstract class ObjectManager : MonoBehaviour
     {
         #region Field
 
@@ -28,7 +27,7 @@ namespace ObjectManager.UNET
         /// <summary>
         /// 管理するオブジェクトの最大数。
         /// </summary>
-        public int managedObjectMaxCount = 10;
+        public int managedObjectMaxCount = 100;
 
         #endregion Field
 
@@ -55,20 +54,17 @@ namespace ObjectManager.UNET
         #region Method
 
         /// <summary>
-        /// サーバーの開始時に呼び出されます。
+        /// 開始時に呼び出されます。
         /// </summary>
-        public override void OnStartServer()
+        protected virtual void Start()
         {
-            base.OnStartServer();
-
             this.managedObjectManager = new ManagedObjectManager();
             this.managedObjectManager.managedObjectMaxCount = this.managedObjectMaxCount;
         }
 
         /// <summary>
-        /// 更新の度に呼び出されます。
+        /// 更新時に呼び出されます。
         /// </summary>
-        [ServerCallback]
         protected virtual void Update()
         {
             this.managedObjectManager.managedObjectMaxCount = this.managedObjectMaxCount;
@@ -84,7 +80,6 @@ namespace ObjectManager.UNET
         /// 生成して追加されたオブジェクト。
         /// 追加に失敗するとき null.
         /// </returns>
-        [Server]
         public virtual GameObject AddNewObject(int objectArrayIndex)
         {
             if (this.managedObjectManager.CheckManagedObjectCountIsMax())
@@ -105,7 +100,6 @@ namespace ObjectManager.UNET
         /// 生成して追加されたオブジェクト。
         /// 追加に失敗するとき null.
         /// </returns>
-        [Server]
         public virtual GameObject AddNewObject()
         {
             return AddNewObject(Random.Range(0, this.generateObjects.Length));
@@ -120,18 +114,12 @@ namespace ObjectManager.UNET
         /// <returns>
         /// 新しいオブジェクトのインスタンス。
         /// </returns>
-        [Server]
         protected virtual GameObject GenerateObject(int objectArrayIndex)
         {
-            // スポーンしてからでないと RpcClient を呼び出すことができません。
-            // スポーン前に初期化したパラメータは共有されます。
-
             GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
             newObject.transform.parent = this.objectParent;
 
             Initialize(objectArrayIndex, newObject);
-
-            NetworkServer.Spawn(newObject);
 
             return newObject;
         }
@@ -142,7 +130,6 @@ namespace ObjectManager.UNET
         /// <returns>
         /// 新しいオブジェクトのインスタンス。
         /// </returns>
-        [Server]
         protected virtual GameObject GenerateObject()
         {
             int objectIndex = Random.Range(0, this.generateObjects.Length);
@@ -152,7 +139,6 @@ namespace ObjectManager.UNET
 
         /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
-        /// スポーンされるより前に実行されます。
         /// </summary>
         /// <param name="objectArrayIndex">
         /// 何番目のオブジェクトが生成されたかを示すインデックス。
@@ -160,13 +146,11 @@ namespace ObjectManager.UNET
         /// <param name="newObject">
         /// 新しく生成されたオブジェクト。
         /// </param>
-        [Server]
         protected abstract void Initialize(int objectArrayIndex, GameObject newObject);
 
         /// <summary>
         /// 管理するオブジェクトをすべて削除して管理対象から除外します。
         /// </summary>
-        [Server]
         public void RemoveAllObject()
         {
             this.managedObjectManager.RemoveAllManagedObjects();
@@ -182,7 +166,6 @@ namespace ObjectManager.UNET
         /// 削除に成功するとき true, 失敗するとき false.
         /// 管理されるオブジェクトでない場合などに削除に失敗します。
         /// </returns>
-        [Server]
         public bool RemoveObject(GameObject managedObject)
         {
             return this.managedObjectManager.RemoveManagedObject(managedObject);

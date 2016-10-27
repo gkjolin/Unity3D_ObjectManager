@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ObjectManager
+namespace ObjectManagementSystem
 {
     /// <summary>
     /// ManagedObject コンポーネントを持つオブジェクトへの参照とその最大数を管理します。
@@ -11,14 +11,24 @@ namespace ObjectManager
     {
         #region Field
 
+        /// <summary>
+        /// 管理するオブジェクトの最大数。
+        /// </summary>
         public int managedObjectMaxCount;
 
+        /// <summary>
+        /// 管理するオブジェクトのリスト。
+        /// </summary>
         protected List<GameObject> managedObjectList;
 
         #endregion Field
 
         #region Property
 
+        /// <summary>
+        /// 管理するオブジェクトのリストを取得します。
+        /// 破壊的操作が可能な点に注意してください。
+        /// </summary>
         public List<GameObject> ManagedObjectList
         {
             get
@@ -55,10 +65,11 @@ namespace ObjectManager
         }
 
         /// <summary>
-        /// 新しい GameObject を管理対象に加えます。
+        /// 管理する新しいオブジェクトを追加します。
+        /// 管理するオブジェクトが最大であるとき追加に失敗します。
         /// </summary>
         /// <param name="managedObject">
-        /// 管理する GameObject.
+        /// 追加するオブジェクト。
         /// </param>
         /// <returns>
         /// 追加に失敗するとき false.
@@ -79,10 +90,11 @@ namespace ObjectManager
         }
 
         /// <summary>
-        /// 指定した GameObject を ManagedObjectList から削除します。
+        /// 指定したオブジェクトを管理から削除します。
+        /// このインスタンスで管理されないオブジェクトを指定するとき失敗します。
         /// </summary>
         /// <param name="managedObject">
-        /// このインスタンスで管理されている GameObject.
+        /// このインスタンスが管理するオブジェクト。
         /// </param>
         /// <returns>
         /// 削除に成功するとき true, 失敗するとき false.
