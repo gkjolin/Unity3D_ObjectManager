@@ -14,6 +14,8 @@ namespace ObjectManagementSystem
         {
             GUI.Label(new Rect(20, 20, 300, 20), "Press Enter to Add New Object.");
             GUI.Label(new Rect(20, 40, 300, 20), "Press Delete to Remove All Objects.");
+            GUI.Label(new Rect(20, 60, 300, 20), "Object Count : " + base.objectManager.ManagedObjectCount
+                                                           + " / " + base.objectManager.managedObjectMaxCount);
         }
     }
 }
