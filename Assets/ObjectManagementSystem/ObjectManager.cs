@@ -249,7 +249,10 @@ namespace ObjectManagementSystem
         {
             for (int i = 0; i < removeCount; i++)
             {
-                RemoveManagedObject(this.managedObjects[i]);
+                if (this.managedObjects.Count > 0)
+                {
+                    RemoveManagedObject(this.managedObjects[0]);
+                }
             }
         }
 
