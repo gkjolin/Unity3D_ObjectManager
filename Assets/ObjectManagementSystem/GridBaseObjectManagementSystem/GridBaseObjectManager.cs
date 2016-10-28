@@ -6,6 +6,7 @@ namespace ObjectManagementSystem.GridBase
     /// <summary>
     /// グリッドベースで管理する機能を備えた ObjectManager です。
     /// </summary>
+    [ExecuteInEditMode]
     public class GridBaseObjectManager : ObjectManager
     {
         // # gridAround について
@@ -24,7 +25,7 @@ namespace ObjectManagementSystem.GridBase
         /// <summary>
         /// Gizmo の色。
         /// </summary>
-        public Color gizmosColor = new Color(125, 255, 125);
+        public Color gizmosColor = new Color(0.5f, 1, 0.5f);
 
         /// <summary>
         /// 管理するグリッド。
@@ -474,6 +475,44 @@ namespace ObjectManagementSystem.GridBase
         }
 
         #endregion Get Objects
+
+        #region Get Grid Bounds
+
+        /// <summary>
+        /// 指定したグリッドを示す領域を取得します。
+        /// </summary>
+        /// <param name="gridPosition">
+        /// グリッド座標。
+        /// </param>
+        /// <returns>
+        /// グリッドの示す領域。
+        /// </returns>
+        public Bounds GetGridBounds(Vector3Int gridPosition)
+        {
+            return GetGridBounds(gridPosition.x, gridPosition.y, gridPosition.z);
+        }
+
+        /// <summary>
+        /// 指定したグリッドを示す領域を取得します。
+        /// </summary>
+        /// <param name="gridPositionX">
+        /// グリッド座標 X.
+        /// </param>
+        /// <param name="gridPositionY">
+        /// グリッド座標 Y.
+        /// </param>
+        /// <param name="gridPositionZ">
+        /// グリッド座標 Z.
+        /// </param>
+        /// <returns>
+        /// グリッドの示す領域。
+        /// </returns>
+        public Bounds GetGridBounds(int gridPositionX, int gridPositionY, int gridPositionZ)
+        {
+            return this.gridBounds[gridPositionX][gridPositionY][gridPositionZ];
+        }
+
+        #endregion Get Grid Bounds
 
         #endregion Method
     }
