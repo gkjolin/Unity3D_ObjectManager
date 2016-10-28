@@ -3,18 +3,22 @@ using System.Collections.Generic;
 
 namespace ObjectManagementSystem.GridBase
 {
+    // # グリッドの初期化について
+    // すでにオブジェクトが追加されている状態でグリッドが初期化されるとき
+    // 不具合が起こります。既に追加されているオブジェクトを再配置する処理を実装する必要があります。
+
+    // # gridAround について
+    // gridAround は、あるグリッドに隣接するグリッドも取得するときに必要です。
+    // 例えば Boids の群衆モデルを実装する場合などに、
+    // 隣接するグリッドのオブジェクトを参照する必要があります。
+    // 参照の度にリストを更新するのは非効率であるため予め参照を用意しておきます。
+
     /// <summary>
     /// グリッドベースで管理する機能を備えた ObjectManager です。
     /// </summary>
     [ExecuteInEditMode]
     public class GridBaseObjectManager : ObjectManager
     {
-        // # gridAround について
-        // gridAround は、あるグリッドに隣接するグリッドも取得するときに必要です。
-        // 例えば Boids の群衆モデルを実装する場合などに、
-        // 隣接するグリッドのオブジェクトを参照する必要があります。
-        // 参照の度にリストを更新するのは非効率であるため予め参照を用意しておきます。
-
         #region Field
 
         /// <summary>
