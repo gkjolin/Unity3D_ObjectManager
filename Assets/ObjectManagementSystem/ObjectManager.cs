@@ -33,6 +33,11 @@ namespace ObjectManagementSystem
         /// </summary>
         protected bool isInitialized;
 
+        /// <summary>
+        /// 以前の管理するオブジェクトの最大数。
+        /// </summary>
+        protected int previousManagedObjectMaxCount;
+
         #endregion Field
 
         #region Property
@@ -69,7 +74,11 @@ namespace ObjectManagementSystem
         /// </summary>
         protected virtual void Update()
         {
-            TrimManagedObjects();
+            if (this.previousManagedObjectMaxCount != this.managedObjectMaxCount)
+            {
+                this.previousManagedObjectMaxCount = this.managedObjectMaxCount;
+                TrimManagedObjects();
+            }
         }
 
         /// <summary>
@@ -79,6 +88,8 @@ namespace ObjectManagementSystem
         public virtual void Initialize()
         {
             this.managedObjects = new List<ManagedObject>();
+            this.previousManagedObjectMaxCount = this.managedObjectMaxCount;
+
             this.isInitialized = true;
         }
 
@@ -191,7 +202,14 @@ namespace ObjectManagementSystem
         /// </returns>
         public bool CheckManagedObjectCountIsMax()
         {
-            return this.managedObjects.Count == this.managedObjectMaxCount;
+            if (this.managedObjects.Count >= this.managedObjectMaxCount)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

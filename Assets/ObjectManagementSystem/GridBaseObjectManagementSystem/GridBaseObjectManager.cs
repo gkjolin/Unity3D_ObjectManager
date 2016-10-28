@@ -90,14 +90,6 @@ namespace ObjectManagementSystem.GridBase
         #region Method
 
         /// <summary>
-        /// 有効になったとき呼び出されます。
-        /// </summary>
-        protected virtual void OnEnable()
-        {
-            Initialize();
-        }
-
-        /// <summary>
         /// 更新時に呼び出されます。
         /// </summary>
         protected override void Update()
@@ -154,8 +146,10 @@ namespace ObjectManagementSystem.GridBase
         /// <summary>
         /// 初期化します。
         /// </summary>
-        protected virtual void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
+
             this.previousTrnsformPosition = base.transform.position;
             this.previousGirdSize = this.gridSize;
             this.previousGridDivide = this.gridDivide;
@@ -294,19 +288,25 @@ namespace ObjectManagementSystem.GridBase
 
         /// <summary>
         /// 新しい管理オブジェクトを追加します。
-        /// 返す値の型は GridBaseManagedObject です。キャストすることができます。
+        /// 管理するオブジェクトの数が最大の場合などに失敗します。
         /// </summary>
-        /// <param name="managedObject">
+        /// <param name="gameObject">
         /// 追加するオブジェクト。
         /// </param>
         /// <returns>
-        /// 追加されたオブジェクト。
+        /// オブジェクトに追加された ManagedObject. 追加に失敗するとき null.
+        /// 返す値の型は GridBaseManagedObject です。キャストすることができます。
         /// </returns>
-        public override ManagedObject AddManagedObject(GameObject managedObject)
+        public override ManagedObject AddManagedObject(GameObject gameObject)
         {
+            if (CheckManagedObjectCountIsMax())
+            {
+                return null;
+            }
+
             // GridBaseManagedObject をコンポーネントとして追加します。
 
-            GridBaseManagedObject gridBaseManagedObject = managedObject.AddComponent<GridBaseManagedObject>();
+            GridBaseManagedObject gridBaseManagedObject = gameObject.AddComponent<GridBaseManagedObject>();
             gridBaseManagedObject.Initialize(this);
 
             // 全体の管理に追加します。
