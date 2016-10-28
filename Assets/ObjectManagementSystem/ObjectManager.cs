@@ -26,7 +26,7 @@ namespace ObjectManagementSystem
 
         /// <summary>
         /// 管理するオブジェクトのリストを取得します。
-        /// 破壊的操作が可能な点に注意してください。
+        /// オブジェクトを挿入または削除するなどの破壊的操作が可能な点に注意してください。
         /// </summary>
         public List<ManagedObject> ManagedObjects
         {
@@ -66,7 +66,7 @@ namespace ObjectManagementSystem
         /// <returns>
         /// オブジェクトに追加された ManagedObject. 追加に失敗するとき null.
         /// </returns>
-        public ManagedObject AddManagedObject(GameObject gameObject)
+        public virtual ManagedObject AddManagedObject(GameObject gameObject)
         {
             if (CheckManagedObjectCountIsMax())
             {
@@ -82,18 +82,18 @@ namespace ObjectManagementSystem
         }
 
         /// <summary>
-        /// オブジェクトを管理対象から解放します。
-        /// 管理されるオブジェクトでない場合などに解放に失敗します。
+        /// 管理するオブジェクトを管理対象から解放します。
+        /// 管理するオブジェクトでない場合などに失敗します。
         /// </summary>
         /// <param name="managedObject">
-        /// 管理対象から解放するオブジェクト。
+        /// 管理するオブジェクト。
         /// </param>
         /// <returns>
         /// 解放に成功するとき true, 失敗するとき false.
         /// </returns>
-        public bool ReleaseManagedObject(ManagedObject managedObject)
+        public virtual bool ReleaseManagedObject(ManagedObject managedObject)
         {
-            if (managedObject.ObjectManager != this)
+            if (!CheckManagedObject(managedObject))
             {
                 return false;
             }
@@ -108,7 +108,7 @@ namespace ObjectManagementSystem
         /// <summary>
         /// すべてのオブジェクトを管理対象から解放します。
         /// </summary>
-        public void ReleaseManagedObjectAll()
+        public virtual void ReleaseManagedObjectAll()
         {
             int count = this.managedObjects.Count - 1;
 
@@ -122,17 +122,17 @@ namespace ObjectManagementSystem
 
         /// <summary>
         /// オブジェクトを削除して管理対象から解放します。
-        /// 管理されるオブジェクトでない場合などに解放に失敗します。
+        /// 管理するオブジェクトでない場合などに失敗します。
         /// </summary>
         /// <param name="managedObject">
-        /// 削除して管理対象から解放するオブジェクト。
+        /// 管理するオブジェクト。
         /// </param>
         /// <returns>
         /// 削除に成功するとき true, 失敗するとき false.
         /// </returns>
-        public bool RemoveManagedObject(ManagedObject managedObject)
+        public virtual bool RemoveManagedObject(ManagedObject managedObject)
         {
-            if (managedObject.ObjectManager != this)
+            if (!CheckManagedObject(managedObject))
             {
                 return false;
             }
@@ -145,7 +145,7 @@ namespace ObjectManagementSystem
         /// <summary>
         /// すべてのオブジェクトを削除して管理対象から解放します。
         /// </summary>
-        public void RemoveManagedObjectAll()
+        public virtual void RemoveManagedObjectAll()
         {
             int count = this.managedObjects.Count - 1;
 
@@ -169,9 +169,23 @@ namespace ObjectManagementSystem
         }
 
         /// <summary>
+        /// 管理するオブジェクトかどうかをチェックします。
+        /// </summary>
+        /// <param name="managedObject">
+        /// 管理するオブジェクト。
+        /// </param>
+        /// <returns>
+        /// 管理するオブジェクトであるとき true, それ以外のとき false.
+        /// </returns>
+        public bool CheckManagedObject(ManagedObject managedObject)
+        {
+            return managedObject.ObjectManager == this;
+        }
+
+        /// <summary>
         /// 管理するオブジェクトの数を最大数に収まるようにトリミングします。
         /// </summary>
-        public void TrimManagedObjects()
+        public virtual void TrimManagedObjects()
         {
             int trimCount = this.managedObjects.Count - this.managedObjectMaxCount;
 
@@ -187,7 +201,7 @@ namespace ObjectManagementSystem
         /// <param name="removeCount">
         /// 削除する数。
         /// </param>
-        public void RemoveOldManagedObject(int removeCount)
+        public virtual void RemoveOldManagedObject(int removeCount)
         {
             for (int i = 0; i < removeCount; i++)
             {
