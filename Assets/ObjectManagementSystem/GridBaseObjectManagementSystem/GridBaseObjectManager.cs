@@ -294,6 +294,7 @@ namespace ObjectManagementSystem.GridBase
 
         /// <summary>
         /// 新しい管理オブジェクトを追加します。
+        /// 返す値の型は GridBaseManagedObject です。キャストすることができます。
         /// </summary>
         /// <param name="managedObject">
         /// 追加するオブジェクト。

@@ -26,7 +26,7 @@ namespace ObjectManagementSystem
         /// <param name="newObject">
         /// 新しく生成されたオブジェクト。
         /// </param>
-        protected override void Initialize(int objectArrayIndex, GameObject newObject)
+        protected override void InitializeObject(int objectArrayIndex, GameObject newObject)
         {
             float moveSpeed = BasicLifeObjectParameter.CalcParameter
                               (this.basicLifeObjectParameter.moveSpeed,

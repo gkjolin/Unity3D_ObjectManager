@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace ObjectManagementSystem
 {
+    // # 初期化について
+    // ObjectManager に即時にオブジェクトを追加したいとき、
+    // ObjectManager の初期化が完了されている必要があります。
+    // しかしながら MonoBehaviour の実行順は保証されないため、
+    // 任意のタイミングで初期化するような仕組みを設ける必要があります。
+    // また任意のタイミングで初期化され追加したオブジェクトへの参照を破棄しないために、
+    // 任意のタイミングで初期化されたときは自動的に初期化しない必要があります。
+
     /// <summary>
     /// オブジェクトへの参照を管理します。
     /// </summary>
@@ -19,6 +27,11 @@ namespace ObjectManagementSystem
         /// 管理するオブジェクトのリスト。
         /// </summary>
         protected List<ManagedObject> managedObjects;
+
+        /// <summary>
+        /// 初期化されているかどうか。初期化されているとき true.
+        /// </summary>
+        protected bool isInitialized;
 
         #endregion Field
 
@@ -41,11 +54,14 @@ namespace ObjectManagementSystem
         #region Method
 
         /// <summary>
-        /// 開始時に呼び出されます。
+        /// 初期化時に呼び出されます。
         /// </summary>
-        protected virtual void Start()
+        protected virtual void Awake()
         {
-            this.managedObjects = new List<ManagedObject>();
+            if (!this.isInitialized)
+            {
+                Initialize();
+            }
         }
 
         /// <summary>
@@ -54,6 +70,16 @@ namespace ObjectManagementSystem
         protected virtual void Update()
         {
             TrimManagedObjects();
+        }
+
+        /// <summary>
+        /// 任意のタイミングで初期化します。
+        /// ふつう Awake で初期化されますが、任意のタイミングで初期化するとき、Awake で初期化されません。
+        /// </summary>
+        public virtual void Initialize()
+        {
+            this.managedObjects = new List<ManagedObject>();
+            this.isInitialized = true;
         }
 
         /// <summary>

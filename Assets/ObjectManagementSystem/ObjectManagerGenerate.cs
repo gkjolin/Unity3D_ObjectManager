@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace ObjectManagementSystem
 {
@@ -74,7 +75,7 @@ namespace ObjectManagementSystem
             GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
             newObject.transform.parent = this.objectParent;
 
-            Initialize(objectArrayIndex, newObject);
+            InitializeObject(objectArrayIndex, newObject);
 
             return newObject;
         }
@@ -101,7 +102,7 @@ namespace ObjectManagementSystem
         /// <param name="newObject">
         /// 新しく生成されたオブジェクト。
         /// </param>
-        protected abstract void Initialize(int objectArrayIndex, GameObject newObject);
+        protected abstract void InitializeObject(int objectArrayIndex, GameObject newObject);
 
         #endregion Method
     }
