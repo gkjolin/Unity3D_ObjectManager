@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
 namespace ObjectManagementSystem.GridBase
 {
@@ -9,6 +9,12 @@ namespace ObjectManagementSystem.GridBase
     public abstract class GridBaseObjectManagerGenerate : GridBaseObjectManager
     {
         #region Field
+
+        /// <summary>
+        /// UNET を使った同期のために生成したオブジェクトをスポーンするかどうか。
+        /// true のときスポーンします。
+        /// </summary>
+        public bool enableSpawn;
 
         /// <summary>
         /// 生成するオブジェクトの親。
@@ -31,21 +37,76 @@ namespace ObjectManagementSystem.GridBase
         /// <param name="objectArrayIndex">
         /// 追加するオブジェクトのインデックス。
         /// </param>
+        /// <param name="position">
+        /// 追加するオブジェクトの座標。
+        /// </param>
+        /// <param name="rotation">
+        /// 追加するオブジェクトの回転。
+        /// </param>
+        /// <param name="scale">
+        /// 追加するオブジェクトの大きさ。
+        /// </param>
         /// <returns>
         /// 生成して追加されたオブジェクト。
         /// 追加に失敗するとき null.
         /// </returns>
-        public virtual GameObject AddObject(int objectArrayIndex)
+        public virtual GameObject AddObject
+            (int objectArrayIndex, Vector3 position, Vector3 rotation, Vector3 scale)
         {
             if (base.CheckManagedObjectCountIsMax())
             {
                 return null;
             }
 
-            GameObject newObject = GenerateObject(objectArrayIndex);
+            GameObject newObject = GenerateObject(objectArrayIndex, position, rotation, scale);
             base.AddManagedObject(newObject);
 
             return newObject;
+        }
+
+        /// <summary>
+        /// 新しいオブジェクトをランダムに生成して追加します。
+        /// 管理するオブジェクトの数が最大の場合などに失敗します。
+        /// </summary>
+        /// <param name="position">
+        /// 追加するオブジェクトの座標。
+        /// </param>
+        /// <param name="rotation">
+        /// 追加するオブジェクトの回転。
+        /// </param>
+        /// <param name="scale">
+        /// 追加するオブジェクトの大きさ。
+        /// </param>
+        /// <returns>
+        /// 生成して追加されたオブジェクト。
+        /// 追加に失敗するとき null.
+        /// </returns>
+        public virtual GameObject AddObject
+            (Vector3 position, Vector3 rotation, Vector3 scale)
+        {
+            return AddObject(Random.Range(0, this.generateObjects.Length),
+                             position,
+                             rotation,
+                             scale);
+        }
+
+        /// <summary>
+        /// 指定した種類のオブジェクトを生成して追加します。
+        /// 管理するオブジェクトの数が最大の場合などに失敗します。
+        /// </summary>
+        /// <param name="objectArrayIndex">
+        /// 追加するオブジェクトのインデックス。
+        /// </param>
+        /// <returns>
+        /// 生成して追加されたオブジェクト。
+        /// 追加に失敗するとき null.
+        /// </returns>
+        public virtual GameObject AddObject(int objectArrayIndex)
+        {
+            return AddObject(objectArrayIndex,
+                             Vector3.zero,
+                             Vector3.zero,
+                             Vector3.one);
         }
 
         /// <summary>
@@ -67,34 +128,43 @@ namespace ObjectManagementSystem.GridBase
         /// <param name="objectArrayIndex">
         /// オブジェクトの種類。
         /// </param>
+        /// <param name="position">
+        /// オブジェクトの座標。
+        /// </param>
+        /// <param name="rotation">
+        /// オブジェクトの回転。
+        /// </param>
+        /// <param name="scale">
+        /// オブジェクトの大きさ。
+        /// </param>
         /// <returns>
-        /// 新しいオブジェクトのインスタンス。
+        /// 生成したオブジェクトのインスタンス。
         /// </returns>
-        protected virtual GameObject GenerateObject(int objectArrayIndex)
+        protected virtual GameObject GenerateObject
+            (int objectArrayIndex, Vector3 position, Vector3 rotation, Vector3 scale)
         {
+            // スポーン前に設定されたパラメータは同期します。
+
             GameObject newObject = GameObject.Instantiate(this.generateObjects[objectArrayIndex]);
+
+            newObject.transform.position = position;
+            newObject.transform.rotation = Quaternion.Euler(rotation);
+            newObject.transform.localScale = scale;
             newObject.transform.parent = this.objectParent;
 
             InitializeObject(objectArrayIndex, newObject);
+
+            if (this.enableSpawn)
+            {
+                NetworkServer.Spawn(newObject);
+            }
 
             return newObject;
         }
 
         /// <summary>
-        /// ランダムな種類の新しいオブジェクトを生成して返します。
-        /// </summary>
-        /// <returns>
-        /// 新しいオブジェクトのインスタンス。
-        /// </returns>
-        protected virtual GameObject GenerateObject()
-        {
-            int objectIndex = Random.Range(0, this.generateObjects.Length);
-
-            return GenerateObject(objectIndex);
-        }
-
-        /// <summary>
         /// 新しく生成されたオブジェクトを初期化します。
+        /// enableSpawn が有効なとき、スポーンするよりも前に呼び出される点に注意してください。
         /// </summary>
         /// <param name="objectArrayIndex">
         /// 何番目のオブジェクトが生成されたかを示すインデックス。
