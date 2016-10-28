@@ -122,7 +122,7 @@ namespace ObjectManagementSystem.GridBase
         /// </summary>
         protected virtual void DrawGridGizmo()
         {
-            if (!this.drawGizmos)
+            if (!this.drawGizmos || !base.isInitialized)
             {
                 return;
             }

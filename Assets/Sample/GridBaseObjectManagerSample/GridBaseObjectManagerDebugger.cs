@@ -60,6 +60,11 @@ namespace GridBaseObjectManagementSystem
                 {
                     for (int z = 0; z < this.gridBaseObjectManager.gridDivide.z; z++)
                     {
+                        if (this.gridBaseObjectManager.CheckManagedObjectCountIsMax())
+                        {
+                            break;
+                        }
+
                         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
                         sphere.transform.position = this.gridBaseObjectManager
