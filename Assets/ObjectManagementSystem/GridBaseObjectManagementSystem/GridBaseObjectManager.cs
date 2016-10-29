@@ -336,7 +336,7 @@ namespace ObjectManagementSystem.GridBase
 
             // どの Grid に属するかを算出して設定し、追加します。
 
-            Vector3Int gridPosition = CalkGridPosition(gridBaseManagedObject.gameObject);
+            Vector3Int gridPosition = CalcGridPosition(gridBaseManagedObject.gameObject);
 
             this.grid[(int)gridPosition.x][(int)gridPosition.y][(int)gridPosition.z].Add(gridBaseManagedObject);
 
@@ -366,7 +366,7 @@ namespace ObjectManagementSystem.GridBase
 
             // 現在のグリッドの位置を確認して、移動の必要がなければ失敗します。
 
-            Vector3Int gridPosition = CalkGridPosition(managedObject.gameObject);
+            Vector3Int gridPosition = CalcGridPosition(managedObject.gameObject);
 
             if (managedObject.GridPosition == gridPosition)
             {
@@ -400,18 +400,32 @@ namespace ObjectManagementSystem.GridBase
         /// <returns>
         /// グリッド座標。
         /// </returns>
-        public Vector3Int CalkGridPosition(GameObject gameObject)
+        public Vector3Int CalcGridPosition(GameObject gameObject)
+        {
+            return CalcGridPosition(gameObject.transform.position);
+        }
+
+        /// <summary>
+        /// 指定する座標が、グリッドのどの位置に該当するかを算出します。
+        /// </summary>
+        /// <param name="position">
+        /// グリッドの位置を算出する座標。
+        /// </param>
+        /// <returns>
+        /// グリッドの座標。
+        /// </returns>
+        public Vector3Int CalcGridPosition(Vector3 position)
         {
             // 原点座標を 0 に合わせてから算出します。
 
             int gridPositionX =
-            (int)((gameObject.transform.position.x - base.transform.position.x) / this.gridUnitSize.x);
+            (int)((position.x - base.transform.position.x) / this.gridUnitSize.x);
 
             int gridPositionY =
-            (int)((gameObject.transform.position.y - base.transform.position.y) / this.gridUnitSize.y);
+            (int)((position.y - base.transform.position.y) / this.gridUnitSize.y);
 
             int gridPositionZ =
-            (int)((gameObject.transform.position.z - base.transform.position.z) / this.gridUnitSize.z);
+            (int)((position.z - base.transform.position.z) / this.gridUnitSize.z);
 
             return new Vector3Int()
             {
