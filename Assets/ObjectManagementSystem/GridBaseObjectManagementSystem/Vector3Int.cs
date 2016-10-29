@@ -8,6 +8,51 @@ namespace ObjectManagementSystem.GridBase
     [System.Serializable]
     public struct Vector3Int
     {
+        #region Static
+
+        private static Vector3Int zero = new Vector3Int(0, 0, 0);
+        private static Vector3Int one = new Vector3Int(1, 1, 1);
+        private static Vector3Int up = new Vector3Int(0, 1, 0);
+        private static Vector3Int down = new Vector3Int(0, -1, 0);
+        private static Vector3Int forward = new Vector3Int(0, 0, 1);
+        private static Vector3Int back = new Vector3Int(0, 0, -1);
+
+        #region const Property
+
+        public static Vector3Int Zero
+        {
+            get { return Vector3Int.zero; }
+        }
+
+        public static Vector3Int One
+        {
+            get { return Vector3Int.one; }
+        }
+
+        public static Vector3Int Up
+        {
+            get { return Vector3Int.up; }
+        }
+
+        public static Vector3Int Down
+        {
+            get { return Vector3Int.down; }
+        }
+
+        public static Vector3Int Forward
+        {
+            get { return Vector3Int.forward; }
+        }
+
+        public static Vector3Int Back
+        {
+            get { return Vector3Int.back; }
+        }
+
+        #endregion const Property
+
+        #endregion Static
+
         #region Field
 
         /// <summary>
@@ -115,12 +160,12 @@ namespace ObjectManagementSystem.GridBase
 
         #region Operator
 
-        public static bool operator == (Vector3Int a, Vector3Int b)
+        public static bool operator ==(Vector3Int a, Vector3Int b)
         {
             return a.x == b.x && a.y == b.y && a.z == b.z;
         }
 
-        public static bool operator != (Vector3Int a, Vector3Int b)
+        public static bool operator !=(Vector3Int a, Vector3Int b)
         {
             return a.x != b.x || a.y != b.y || a.z != b.z;
         }
