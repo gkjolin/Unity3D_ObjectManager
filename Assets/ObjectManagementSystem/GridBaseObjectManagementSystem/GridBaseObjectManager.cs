@@ -82,11 +82,28 @@ namespace ObjectManagementSystem.GridBase
 
         /// <summary>
         /// 管理するグリッドを取得します。
-        /// オブジェクトを挿入または削除するなどの破壊的操作が可能な点に注意してください。
+        /// オブジェクトを挿入または削除するなどの破壊的な操作が可能な点に注意してください。
         /// </summary>
         public List<GridBaseManagedObject>[][][] Grid
         {
             get { return this.grid; }
+        }
+
+        /// <summary>
+        /// 管理するグリッド(周辺を含む)を取得します。
+        /// オブジェクトを挿入または削除するなどの破壊的な操作が可能な点に注意してください。
+        /// </summary>
+        public List<List<GridBaseManagedObject>>[][][] GridAround
+        {
+            get { return this.gridAround; }
+        }
+
+        /// <summary>
+        /// 管理するグリッドの領域を取得します。破壊的な操作が可能な点に注意して下さい。
+        /// </summary>
+        public Bounds[][][] GridBounds
+        {
+            get { return this.gridBounds; }
         }
 
         #endregion Property
